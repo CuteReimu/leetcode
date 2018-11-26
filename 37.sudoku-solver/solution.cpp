@@ -36,25 +36,25 @@ private:
 	}
 	bool checkSodoku(vector<vector<char>>& board, int row, int col)
 	{
-		set<char> cache;
+		int cache = 0;
 		for (int i = 0; i < 9; i++)
 		{
 			char val = board[row][i];
 			if (val == '.')
 				continue;
-			if (!cache.insert(val).second)
+			if (!add1(cache, val))
 				return false;
 		}
-		cache.clear();
+		cache = 0;
 		for (int i = 0; i < 9; i++)
 		{
 			char val = board[i][col];
 			if (val == '.')
 				continue;
-			if (!cache.insert(val).second)
+			if (!add1(cache, val))
 				return false;
 		}
-		cache.clear();
+		cache = 0;
 		for (int i = 0; i < 3; i++)
 		{
 			for (int j = 0; j < 3; j++)
@@ -62,10 +62,20 @@ private:
 				char val = board[row / 3 * 3 + i][col / 3 * 3 + j];
 				if (val == '.')
 					continue;
-				if (!cache.insert(val).second)
+				if (!add1(cache, val))
 					return false;
 			}
 		}
+		return true;
+	}
+	bool add1(int &cache, int v)
+	{
+		int value = 1 << (v - '0');
+		if ((cache & value) != 0)
+		{
+			return false;
+		}
+		cache |= value;
 		return true;
 	}
 };
