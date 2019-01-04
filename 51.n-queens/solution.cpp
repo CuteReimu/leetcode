@@ -2,74 +2,56 @@ class Solution {
 public:
 	vector<vector<string>> solveNQueens(int n) {
 		vector<vector<string>> result;
-		if (n > 0)
+		int *answer = new int[n];
+		int **p = new int*[n];
+		for (int i = 0; i < n; i++)
 		{
-			vector<int> nums;
-			for (int i = 0; i < n; i++)
-				nums.push_back(i);
-			vector<vector<int>> vec = permute(nums);
-			for (vector<vector<int>>::const_reference v : vec)
-			{
-				result.emplace_back();
-				for (vector<int>::const_reference i : v)
-				{
-					string s;
-					for (int j = 0; j < n; j++)
-						s += j == i ? 'Q' : '.';
-					result.back().push_back(move(s));
-				}
-			}
+			p[i] = new int[n];
+			memset(p[i], 0, n * sizeof(int));
 		}
+		solveNQueens(result, answer, p, n, 0);
+		for (int i = 0; i < n; i++)
+			delete[] p[i];
+		delete[] p;
 		return result;
 	}
-
-	vector<vector<int>> permute(vector<int>& nums) {
-		list<vector<int>> result;
-		if (!nums.empty())
+private:
+	void solveNQueens(vector<vector<string>> &result, int *answer, int **p, int n, int j)
+	{
+		if (j == n)
 		{
-			result.push_back(vector<int>());
-			int count = 0;
-			for (vector<int>::iterator it = nums.begin(); it != nums.end(); it++)
+			result.emplace_back(n, string(n, '.'));
+			for (int i = 0; i < n; i++)
+				result.back()[i][answer[i]] = 'Q';
+			return;
+		}
+		for (int i = 0; i < n; i++)
+		{
+			if (!p[j][i])
 			{
-				int i = 0;
-				int iMax = result.size();
-				for (int i = 0; i < iMax; i++)
+				answer[j] = i;
+				for (int k = j + 1; k < n; k++)
 				{
-					list<vector<int>>::iterator itr = result.begin();
-					for (vector<int>::iterator iter = itr->begin(); iter != itr->end(); iter++)
-					{
-						vector<int> vec(itr->begin(), iter);
-						vec.push_back(*it);
-						vec.insert(vec.end(), iter, itr->end());
-						if (nums.size() - 1 != count || check(vec))
-								result.push_back(vec);
-					}
-					vector<int> vec(itr->begin(), itr->end());
-					vec.push_back(*it);
-					if (nums.size() - 1 != count || check(vec))
-							result.push_back(vec);
-					result.pop_front();
+					p[k][i]++;
+					int i1 = k - j + i;
+					int i2 = j - k + i;
+					if (i1 < n)
+						p[k][i1]++;
+					if (i2 >= 0)
+						p[k][i2]++;
 				}
-				count++;
+				solveNQueens(result, answer, p, n, j + 1);
+				for (int k = j + 1; k < n; k++)
+				{
+					p[k][i]--;
+					int i1 = k - j + i;
+					int i2 = j - k + i;
+					if (i1 < n)
+						p[k][i1]--;
+					if (i2 >= 0)
+						p[k][i2]--;
+				}
 			}
 		}
-		return vector<vector<int>>(result.begin(), result.end());
-	}
-
-	bool check(const vector<int> &vec)
-	{
-		set<int> s;
-		for (int i = 0; i < vec.size(); i++)
-		{
-			if (!s.insert(vec[i] - i).second)
-				return false;
-		}
-		s.clear();
-		for (int i = 0; i < vec.size(); i++)
-		{
-			if (!s.insert(vec[i] + i).second)
-				return false;
-		}
-		return true;
 	}
 };
