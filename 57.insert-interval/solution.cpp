@@ -9,34 +9,20 @@
  */
 class Solution {
 public:
-    vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
-		intervals.push_back(newInterval);
-        map<int, int> cache;
-		for (Interval &i : intervals)
-		{
-			map<int, int>::iterator it = cache.find(i.start);
-			if (it == cache.end())
-				cache.emplace(i.start, 1);
-			else
-				it->second++;
-			it = cache.find(i.end);
-			if (it == cache.end())
-				cache.emplace(i.end, -1);
-			else
-				it->second--;
-		}
+	vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
 		vector<Interval> result;
-		int start;
-		int level = 0;
-		for (pair<const int, int> &p : cache)
+		if (intervals.empty())
 		{
-			int oldLevel = level;
-			level += p.second;
-			if (!oldLevel)
-				start = p.first;
-			if (!level)
-				result.emplace_back(start, p.first);
+			result.push_back(newInterval);
+			return result;
 		}
+		vector<Interval>::iterator it1 = lower_bound(intervals.begin(), intervals.end(), newInterval.start, [](const Interval &interval, int i)->bool{return interval.end < i;});
+		vector<Interval>::iterator it3 = upper_bound(intervals.begin(), intervals.end(), newInterval.end, [](int i, const Interval &interval)->bool{return interval.start > i;});
+		vector<Interval>::iterator it2 = it3 - 1;
+		result.insert(result.end(), intervals.begin(), it1);
+		result.emplace_back(it1 != intervals.end() && it1->start < newInterval.start ? it1->start : newInterval.start,
+			it2->end > newInterval.end ? it2->end : newInterval.end);
+		result.insert(result.end(), it3, intervals.end());
 		return result;
     }
 };
