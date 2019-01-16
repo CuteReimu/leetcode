@@ -1,32 +1,20 @@
 class Solution {
 public:
 	int removeDuplicates(vector<int>& nums) {
-		int i = 0;
-		int curValue;
-		int curCount = 0;
-		for (int &n : nums)
+		if (nums.empty()) return 0;
+		int curValue = nums[0];
+		int len = nums.size();
+		int i = len > 1 && nums[0] == nums[1] ? 1 : 0;
+		for (int j = 1; j < len; j++)
 		{
-			switch (curCount)
+			if (nums[j] != curValue)
 			{
-			case 0:
-				curCount = 1;
-				curValue = n;
-				i++;
-				break;
-			case 1:
-				curCount = curValue == n ? 2 : 1;
-				curValue = n;
-				nums[i++] = n;
-				break;
-			case 2:
-				if (curValue != n)
-				{
-					curCount = 1;
-					curValue = n;
-					nums[i++] = n;
-				}
+				nums[i++] = curValue;
+				curValue = nums[j];
+				if (j + 1 < len && nums[j] == nums[j + 1]) nums[i++] = curValue;
 			}
 		}
+		nums[i++] = curValue;
 		return i;
 	}
 };
