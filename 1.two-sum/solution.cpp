@@ -1,24 +1,34 @@
-#include <vector>
-#include <unordered_map>
-using namespace std;
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        unordered_map<int, int> hashMap;
-        vector<int> result;
-        for (int i = 0; i < nums.size(); i++)
-        {
-            unordered_map<int, int>::iterator itr = hashMap.find(target - nums[i]);
-            if (itr != hashMap.end())
-            {
-                result.push_back(i);
-                result.push_back(itr->second);
-                return result;
-            } else
-            {
-                hashMap[nums[i]] = i;
-            }
-        }
-        return result;
-    }
+	vector<int> twoSum(vector<int>& nums, int target) {
+		map<int, int> cache;
+		vector<int> result;
+		int len = nums.size();
+		for (int i = 0; i < len; i++)
+		{
+			auto addResult = cache.insert(make_pair(nums[i], i));
+			if (!addResult.second && addResult.first->first * 2 == target)
+			{
+				result.push_back(addResult.first->second);
+				result.push_back(i);
+				return result;
+			}
+		}
+		auto it1 = cache.begin();
+		auto it2 = cache.rbegin();
+		while (it1 != it2.base())
+		{
+			int sum = it1->first + it2->first;
+			if (sum == target)
+			{
+				result.push_back(it1->second);
+				result.push_back(it2->second);
+				break;
+			} else if (sum > target)
+				it2++;
+			else
+				it1++;
+		}
+		return result;
+	}
 };
