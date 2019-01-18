@@ -1,19 +1,25 @@
 class Solution {
     public int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> cache = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nums.length; i++)
-            cache.put(nums[i], i);
+        Map<Integer, Integer> cache = new HashMap<>();
         for (int i = 0; i < nums.length; i++)
         {
-            int a = target - nums[i];
-            if (cache.containsKey(a))
-            {
-                int[] result = {i, cache.get(a)};
-                if (result[0] != result[1])
-                    return result;
-            }
+            Integer j = cache.putIfAbsent(nums[i], i);
+            if (j != null && nums[i] * 2 == target)
+                return new int[]{i, j};
         }
-        int[] result = {};
-        return result;
+        Arrays.sort(nums);
+        int i = 0;
+        int j = nums.length - 1;
+        for (; i < j;)
+        {
+            int s = nums[i] + nums[j];
+            if (s == target)
+                return new int[]{cache.get(nums[i]), cache.get(nums[j])};
+            if (s > target)
+                j--;
+            else
+                i++;
+        }
+        return null;
     }
 }
