@@ -10,14 +10,18 @@
 class Solution {
 public:
 	TreeNode* buildTree(const vector<int>& preorder, const vector<int>& inorder) {
-		if (preorder.empty()) return nullptr;
-		int val = preorder.front();
+		return buildTree(preorder, 0, inorder, 0, preorder.size());
+	}
+private:
+	TreeNode* buildTree(const vector<int>& preorder, int prebeg, const vector<int>& inorder, int inorderbeg, int len) {
+		if (!len) return nullptr;
+		int val = preorder[prebeg];
 		TreeNode *head = new TreeNode(val);
-		int i = 0;
+		int i = inorderbeg;
 		while (inorder[i] != val)
 			i++;
-		head->left = buildTree(vector<int>(preorder.begin() + 1, preorder.begin() + (i + 1)), vector<int>(inorder.begin(), inorder.begin() + i));
-		head->right = buildTree(vector<int>(preorder.begin() + (i + 1), preorder.end()), vector<int>(inorder.begin() + (i + 1), inorder.end()));
+		head->left = buildTree(preorder, prebeg + 1, inorder, inorderbeg, i - inorderbeg);
+		head->right = buildTree(preorder, prebeg + 1 + i - inorderbeg, inorder, i + 1, len - 1 - i + inorderbeg);
 		return head;
 	}
 };
