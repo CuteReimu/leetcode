@@ -9,49 +9,36 @@
  */
 
 class Solution {
+private:
+	TreeNode *first;
+	TreeNode *last;
 public:
 	void recoverTree(TreeNode* root) {
-		if (!root) return;
-		stack<pair<TreeNode *, unsigned char>> cache;
-		cache.push(make_pair(root, 0));
-		TreeNode *first = nullptr, *second = nullptr, *last = nullptr;
-		while (!(cache.empty() || first && second))
+		first = nullptr;
+		last = nullptr;
+		if (!__recoverTree(root) && first && last)
+			swap(first->val, last->val);
+	}
+private:
+	bool __recoverTree(TreeNode* root) {
+		if (!root) return false;
+		if (__recoverTree(root->left))
+			return true;
+		if (!first)
 		{
-			pair<TreeNode *, unsigned char> &t = cache.top();
-			switch (t.second)
+			if (last && root->val < last->val)
+				first = last;
+		} else
+		{
+			if (root->val > first->val)
 			{
-			case 0:
-				t.second++;
-				if (t.first->left)
-				{
-					cache.push(make_pair(t.first->left, 0));
-					break;
-				}
-			case 1:
-				t.second++;
-				if (!first)
-				{
-					if (last && t.first->val < last->val)
-						first = last;
-				} else
-				{
-					if (t.first->val > first->val)
-					{
-						second = last;
-						break;
-					}
-				}
-				last = t.first;
-				if (t.first->right)
-				{
-					cache.push(make_pair(t.first->right, 0));
-					break;
-				}
-			case 2:
-				cache.pop();
+				swap(first->val, last->val);
+				return true;
 			}
 		}
-		if (first)
-			swap(first->val, second ? second->val : last->val);
+		last = root;
+		if (__recoverTree(root->right))
+			return true;
+		return false;
 	}
 };
