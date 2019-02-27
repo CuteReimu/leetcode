@@ -1,0 +1,1 @@
+https://leetcode.cn/problems/employees-earning-more-than-their-managers
