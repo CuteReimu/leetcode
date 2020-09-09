@@ -1,31 +1,22 @@
 class Solution {
 public:
 	vector<vector<int>> combine(int n, int k) {
-		vector<vector<int>> result;
-		vector<int> vec;
-		combine(result, vec, n, k, 1);
-		return result;
+		return combine(n, k, n);
 	}
-private:
-	void combine(vector<vector<int>> &result, vector<int> &cur, int n, int k, int start)
-	{
-		cur.emplace_back();
-		if (1 == k)
-		{
-			for (int i = start; i <= n; i++)
-			{
-				cur.back() = i;
-				result.push_back(cur);
+	vector<vector<int>> combine(int n, int k, int end) {
+		vector<vector<int>> vec;
+		if (k == 1) {
+			for (int i = 1; i <= end; i++)
+				vec.push_back(vector<int>(1, i));
+			return vec;
+		}
+		for (int i = end; i > 1; i--) {
+			vector<vector<int>> result2 = combine(n, k - 1, i - 1);
+			for (const vector<int>& v : result2) {
+				vec.push_back(v);
+				vec.back().push_back(i);
 			}
-			cur.pop_back();
-			return;
 		}
-		int len = n - k + 1;
-		for (int i = start; i <= len; i++)
-		{
-			cur.back() = i;
-			combine(result, cur, n, k - 1, i + 1);
-		}
-		cur.pop_back();
+		return vec;
 	}
 };
