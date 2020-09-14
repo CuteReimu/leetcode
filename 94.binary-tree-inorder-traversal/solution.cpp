@@ -10,30 +10,16 @@
 class Solution {
 public:
     vector<int> inorderTraversal(TreeNode* root) {
-        stack<pair<TreeNode *, unsigned char>> cache;
-        cache.push(make_pair(root, 0));
         vector<int> result;
-        while (!cache.empty())
-        {
-            auto &t = cache.top();
-            if (t.second == 2)
-            {
-                cache.pop();
-            } else if (t.second == 1)
-            {
-                t.second = 2;
-                if (t.first != nullptr)
-                {
-                    cache.push(make_pair(t.first->right, 0));
-                    result.push_back(t.first->val);
-                }
-            } else
-            {
-                t.second = 1;
-                if (t.first != nullptr)
-                    cache.push(make_pair(t.first->left, 0));
-            }
-        }
+        inorderTraversal(root, result);
         return result;
+    }
+
+private:
+    void inorderTraversal(TreeNode* root, vector<int>& vec) {
+        if (!root) return;
+        inorderTraversal(root->left, vec);
+        vec.push_back(root->val);
+        inorderTraversal(root->right, vec);
     }
 };
