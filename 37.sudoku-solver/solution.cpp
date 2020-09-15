@@ -1,81 +1,41 @@
 class Solution {
 public:
-	void solveSudoku(vector<vector<char>>& board) {
-		solveSudoku(board, 0);
-	}
+    void solveSudoku(vector<vector<char>>& board) {
+        solveSudoku(board, 0);
+    }
 private:
-	bool solveSudoku(vector<vector<char>>& board, int i) {
-		int row, col;
-		toNextNum(board, i, row, col);
-		if (i >= 81)
-			return true;
-		for (int j = 1; j <= 9; j++)
-		{
-			board[row][col] = j + '0';
-			if (!checkSodoku(board, row, col))
-				continue;
-			if (solveSudoku(board, i + 1))
-				return true;
-		}
-		board[row][col] = '.';
-		return false;
-	}
-	void toNextNum(const vector<vector<char>>& board, int &i, int &row, int &col)
-	{
-		if (i >= 81)
-			return;
-		row = i / 9;
-		col = i % 9;
-		while (board[row][col] != '.')
-		{
-			if (++i >= 81)
-				return;
-			row = i / 9;
-			col = i % 9;
-		}
-	}
-	bool checkSodoku(vector<vector<char>>& board, int row, int col)
-	{
-		int cache = 0;
-		for (int i = 0; i < 9; i++)
-		{
-			char val = board[row][i];
-			if (val == '.')
-				continue;
-			if (!add1(cache, val))
-				return false;
-		}
-		cache = 0;
-		for (int i = 0; i < 9; i++)
-		{
-			char val = board[i][col];
-			if (val == '.')
-				continue;
-			if (!add1(cache, val))
-				return false;
-		}
-		cache = 0;
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				char val = board[row / 3 * 3 + i][col / 3 * 3 + j];
-				if (val == '.')
-					continue;
-				if (!add1(cache, val))
-					return false;
-			}
-		}
-		return true;
-	}
-	bool add1(int &cache, int v)
-	{
-		int value = 1 << (v - '0');
-		if ((cache & value) != 0)
-		{
-			return false;
-		}
-		cache |= value;
-		return true;
-	}
+    bool solveSudoku(vector<vector<char>>& board, int pos) {
+        int i, j;
+        do {
+            if (pos >= 9 * 9)
+                return true;
+            i = pos / 9;
+            j = pos % 9;
+            if (board[i][j] == '.')
+                break;
+            pos++;
+        } while (true);
+        for (int v = 1; v <= 9; v++) {
+            if (check(board, i, j, '0' + v)) {
+                board[i][j] = '0' + v;
+                if (solveSudoku(board, pos + 1)) {
+                    return true;
+                }
+            }
+        }
+        board[i][j] = '.';
+        return false;
+    }
+
+    bool check(vector<vector<char>>& board, int i, int j, char v) {
+        for (int x = 0; x < 9; x++) {
+            if (board[i][x] == v)
+                return false;
+            if (board[x][j] == v)
+                return false;
+            if (board[i / 3 * 3 + x / 3][j / 3 * 3 + x % 3] == v)
+                return false;
+        }
+        return true;
+    }
 };
