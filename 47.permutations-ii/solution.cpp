@@ -1,41 +1,44 @@
+bool operator<(const vector<int> &v1, const vector<int> &v2) {
+	for (int i = 0;;i++) {
+		if (i == v2.size())
+			return false;
+		if (i == v1.size())
+			return true;
+		if (v1[i] != v2[i])
+			return v1[i] < v2[i];
+	}
+}
+
 class Solution {
 public:
 	vector<vector<int>> permuteUnique(vector<int>& nums) {
-		list<vector<int>> result;
-		if (!nums.empty())
-		{
-			sort(nums.begin(), nums.end());
-			result.push_back(vector<int>());
-			for (vector<int>::iterator it = nums.begin(); it != nums.end(); it++)
-			{
-				int i = 0;
-				int iMax = result.size();
-				for (int i = 0; i < iMax; i++)
-				{
-					bool found = false;
-					list<vector<int>>::iterator itr = result.begin();
-					for (vector<int>::iterator iter = itr->begin(); iter != itr->end(); iter++)
-					{
-						vector<int> vec(itr->begin(), iter);
-						vec.push_back(*it);
-						vec.insert(vec.end(), iter, itr->end());
-						result.push_back(vec);
-						if (*iter == *it)
-						{
-							found = true;
-							break;
-						}
-					}
-					if (!found)
-					{
-						vector<int> vec(itr->begin(), itr->end());
-						vec.push_back(*it);
-						result.push_back(vec);
-					}
-					result.pop_front();
-				}
+		if (nums.size() == 0)
+			return vector<vector<int>>();
+		set<list<int>> result = permuteUnique(nums, 0);
+		vector<vector<int>> result2;
+		for (auto &l : result) {
+			result2.emplace_back(l.begin(), l.end());
+		}
+		return result2;
+	}
+
+private:
+	set<list<int>> permuteUnique(const vector<int>&nums, int i) {
+		set<list<int>> result;
+		if (nums.size() == i) {
+			result.emplace();
+			return result;
+		}
+		set<list<int>> result2 = permuteUnique(nums, i+1);
+		for (auto val : result2) {
+			for (auto it = val.begin();; it++) {
+				it = val.insert(it, nums[i]);
+				result.insert(val);
+				it = val.erase(it);
+				if (it == val.end())
+					break;
 			}
 		}
-		return vector<vector<int>>(result.begin(), result.end());
+		return result;
 	}
 };
