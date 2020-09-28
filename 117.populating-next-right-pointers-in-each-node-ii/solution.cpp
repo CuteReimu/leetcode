@@ -1,39 +1,45 @@
-/**
- * Definition for binary tree with next pointer.
- * struct TreeLinkNode {
- *  int val;
- *  TreeLinkNode *left, *right, *next;
- *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
- * };
- */
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
+};
+*/
+
 class Solution {
 public:
-    void connect(TreeLinkNode *root) {
-        if (!root) return;
-        TreeLinkNode *tmp = root->next;
-        while (tmp)
-        {
-            if (tmp->left)
-            {
-                tmp = tmp->left;
-                break;
+    Node* connect(Node* root) {
+        Node *first = nullptr;
+        Node *p = root;
+        Node *q = nullptr;
+        while (p) {
+            if (p->left) {
+                if (q) q = q->next = p->left;
+                else q = p->left;
+                if (!first) first = p->left;
             }
-            if (tmp->right)
-            {
-                tmp = tmp->right;
-                break;
+            if (p->right) {
+                if (q) q = q->next = p->right;
+                else q = p->right;
+                if (!first) first = p->right;
             }
-            tmp = tmp->next;
+            p = p->next;
+            if (!p) {
+                p = first;
+                q = nullptr;
+                first = nullptr;
+            }
         }
-        if (root->left)
-        {
-            root->left->next = root->right ? root->right : tmp;
-        }
-        if (root->right)
-        {
-            root->right->next = tmp;
-        }
-        connect(root->right);
-        connect(root->left);
+        return root;
     }
 };
