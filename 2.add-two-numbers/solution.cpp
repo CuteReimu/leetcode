@@ -3,61 +3,34 @@
  * struct ListNode {
  *     int val;
  *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
 class Solution {
 public:
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        clear(ans);
-        int carry = 0;
-        ListNode *head = NULL, *p = NULL;
-        while (l1 != NULL && l2 != NULL)
-        {
-            if (p == NULL)
-            {
-                head = new ListNode(l1->val + l2->val);
-                p = head;
-            } else
-            {
-                p->next = new ListNode(carry + l1->val + l2->val);
-                p = p->next;
-            }
-            carry = p->val / 10;
-            p->val %= 10;
-            l1 = l1->next;
-            l2 = l2->next;
-        }
-        if (l1 != NULL || l2 != NULL)
-        {
-            ListNode *q = l1 != NULL ? l1 : l2;
-            while (q != NULL)
-            {
-                p -> next = new ListNode(carry + q->val);
-                p = p->next;
-                q = q->next;
-                carry = p->val / 10;
-                p->val %= 10;
-            }
-        }
-        if (carry > 0)
-        {
-            p->next = new ListNode(carry);
-        }
-        return head;
+        return addTwoNumbers(l1, l2, 0);
     }
-    virtual ~Solution()
-    {
-        clear(ans);
-    }
+
 private:
-    ListNode* ans;
-    static void clear(ListNode *ans)
-    {
-        if (ans != NULL)
-        {
-            clear(ans->next);
-            delete ans;
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2, int carry) {
+        if (l1) {
+            if (l2) {
+                int val = l1->val + l2->val + carry;
+                return new ListNode(val % 10, addTwoNumbers(l1->next, l2->next, val / 10));
+            } else {
+                int val = l1->val + carry;
+                return new ListNode(val % 10, addTwoNumbers(l1->next, nullptr, val / 10));
+            }
+        } else {
+            if (l2) {
+                int val = l2->val + carry;
+                return new ListNode(val % 10, addTwoNumbers(nullptr, l2->next, val / 10));
+            } else {
+                return carry > 0 ? new ListNode(carry) : nullptr;
+            }
         }
     }
 };
