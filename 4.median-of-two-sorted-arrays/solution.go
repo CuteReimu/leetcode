@@ -1,48 +1,46 @@
-func min(a int, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func getKthElement(nums1 []int, nums2 []int, k int) int {
-	m := len(nums1)
-	n := len(nums2)
-	index1 := 0
-	index2 := 0
-
-	for {
-		// 边界情况
-		if index1 == m {
-			return nums2[index2+k-1]
-		}
-		if index2 == n {
-			return nums1[index1+k-1]
-		}
-		if k == 1 {
-			return min(nums1[index1], nums2[index2])
-		}
-
-		// 正常情况
-		newIndex1 := min(index1+k/2-1, m-1)
-		newIndex2 := min(index2+k/2-1, n-1)
-		pivot1 := nums1[newIndex1]
-		pivot2 := nums2[newIndex2]
-		if pivot1 <= pivot2 {
-			k -= newIndex1 - index1 + 1
-			index1 = newIndex1 + 1
-		} else {
-			k -= newIndex2 - index2 + 1
-			index2 = newIndex2 + 1
-		}
-	}
-}
-
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
-	totalLength := len(nums1) + len(nums2)
-	if totalLength%2 == 1 {
-		return float64(getKthElement(nums1, nums2, (totalLength+1)/2))
-	} else {
-		return float64(getKthElement(nums1, nums2, totalLength/2)+getKthElement(nums1, nums2, totalLength/2+1)) / 2.0
+	i := 0
+	j := 0
+	l := len(nums1) + len(nums2)
+	if l == 1 {
+		if len(nums1) > 0 {
+			return float64(nums1[0])
+		}
+		return float64(nums2[0])
 	}
+	cur := 0
+	last := 0
+	for {
+		if i < len(nums1) {
+			last = cur
+			if j < len(nums2) {
+				if nums1[i] <= nums2[j] {
+					cur = nums1[i]
+					i++
+				} else {
+					cur = nums2[j]
+					j++
+				}
+			} else {
+				cur = nums1[i]
+				i++
+			}
+		} else if j < len(nums2) {
+			last = cur
+			cur = nums2[j]
+			j++
+		} else {
+			break
+		}
+		if l%2 == 1 {
+			if i+j > (l-1)/2 {
+				return float64(cur)
+			}
+		} else {
+			if i+j > l/2 {
+				return float64(cur+last) / 2
+			}
+		}
+	}
+	return 0.0
 }
