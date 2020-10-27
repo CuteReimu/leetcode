@@ -7,15 +7,19 @@
  * }
  */
 func preorderTraversal(root *TreeNode) []int {
-	var cache []int
-	return preorderTraversal2(root, cache)
-}
-
-func preorderTraversal2(root *TreeNode, cache []int) []int {
-	if root == nil {
-		return cache
+	var result []int
+	myList := list.New()
+	myList.PushBack(root)
+	for myList.Len() > 0 {
+		p := myList.Back()
+		value := myList.Remove(p)
+		node := value.(*TreeNode)
+		if node == nil {
+			continue
+		}
+		result = append(result, node.Val)
+		myList.PushBack(node.Right)
+		myList.PushBack(node.Left)
 	}
-	cache = append(cache, root.Val)
-	cache = preorderTraversal2(root.Left, cache)
-	return preorderTraversal2(root.Right, cache)
+	return result
 }
