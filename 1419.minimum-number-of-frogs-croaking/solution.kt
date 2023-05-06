@@ -22,7 +22,7 @@ class Solution {
                 }
                 'k' -> {
                     if (a == 0) return -1
-                    k = c.coerceAtLeast(k)
+                    k = maxOf(c, k)
                     c--
                     r--
                     o--
