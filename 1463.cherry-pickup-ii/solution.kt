@@ -8,15 +8,15 @@ class Solution {
         for (i in 1 until m) {
             for (j1 in 0 until n) {
                 for (j2 in 0 until n) {
-                    var best = -1
-                    for (dj1 in (j1-1)..(j1+1)) {
-                        for (dj2 in (j2-1)..(j2+1)) {
-                            if (dj1 in 0 until n && dj2 in 0 until n && f[dj1][dj2] != -1) {
-                                best = maxOf(best, f[dj1][dj2] + if(j1 == j2) grid[i][j1] else grid[i][j1] + grid[i][j2])
+                    g[j1][j2] = (j1-1..j1+1).maxOf { dj1 ->
+                        (j2-1..j2+1).maxOf { dj2 ->
+                            if (dj1 !in 0 until n || dj2 !in 0 until n) -1
+                            else if (f[dj1][dj2] == -1) -1
+                            else {
+                                f[dj1][dj2] + if(j1 == j2) grid[i][j1] else grid[i][j1] + grid[i][j2]
                             }
                         }
                     }
-                    g[j1][j2] = best
                 }
             }
             val temp = f
