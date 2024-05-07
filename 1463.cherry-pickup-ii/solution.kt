@@ -10,10 +10,10 @@ class Solution {
                 for (j2 in 0 until n) {
                     g[j1][j2] = (j1-1..j1+1).maxOf { dj1 ->
                         (j2-1..j2+1).maxOf { dj2 ->
-                            if (dj1 !in 0 until n || dj2 !in 0 until n) -1
-                            else if (f[dj1][dj2] == -1) -1
-                            else {
-                                f[dj1][dj2] + if(j1 == j2) grid[i][j1] else grid[i][j1] + grid[i][j2]
+                            when {
+                                dj1 !in 0 until n || dj2 !in 0 until n || f[dj1][dj2] == -1 -> -1
+                                j1 == j2 -> f[dj1][dj2] + grid[i][j1]
+                                else -> f[dj1][dj2] + grid[i][j1] + grid[i][j2]
                             }
                         }
                     }
